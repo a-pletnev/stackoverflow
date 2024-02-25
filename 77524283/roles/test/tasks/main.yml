@@ -1,0 +1,7 @@
+---
+# copy template to home dir with credentials
+- name: Copy Cred
+  ansible.builtin.template:
+    src: credentials.txt.j2
+    dest: DBcredentials.txt
+  become: true

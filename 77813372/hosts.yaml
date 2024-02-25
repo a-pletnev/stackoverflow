@@ -1,0 +1,10 @@
+all:
+  children:
+    encrypted_hosts_test:
+      hosts:
+        machine1:
+          file_name: "machine1_file"
+        machine2:
+          file_name: "machine2_file"
+  vars:
+    ansible_connection: local

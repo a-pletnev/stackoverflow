@@ -1,0 +1,57 @@
+---
+- hosts: localhost
+  gather_facts: true
+  tasks:
+#    - name: Load data from passwd
+#      getent:
+#        database: passwd
+#      register: passwd_data
+#
+    - debug:
+        var: ansible_facts
+
+    - name: Check User List
+      shell:
+        cmd: |
+          awk -F ':' '{ if ($3 >= 280 && $7 != "/sbin/nologin") print $1 }' /etc/passwd
+      register: user_list_result
+
+    - name: Get info on /etc/passwd
+      ansible.builtin.shell: "grep ^{{ item }}: /etc/passwd"
+      loop: "{{ user_list_result.stdout_lines }}"
+      register: user_info_results
+
+    - name: Check SUDO Privileges
+      ansible.builtin.shell: "sudo -U {{ item.item }} -l | grep -q '(ALL) ALL' && echo 'YES' || echo 'NO'"
+      loop: "{{ user_info_results.results }}"
+      register: sudo_status_results
+
+    - name: Check Last Login Date
+      ansible.builtin.shell: "lastlog -u {{ item.item }} | awk 'NR==2 { print $4 }'"
+      loop: "{{ user_info_results.results }}"
+      register: last_login_results
+
+    - debug:
+        var: user_info_results
+
+    - debug:
+        var: user_info_results
+      vars:
+        user_info_results: "{{ user_info_results.results }}"
+
+#    - debug:
+#        var: sudo_status_results.results
+#
+#    - debug:
+#        var: last_login_results.results
+#
+    - name: Override the variables
+      set_fact:
+        user_info_results: "{{ user_info_results.results }}"
+        sudo_status_results: "{{ sudo_status_results.results }}"
+        last_login_results: "{{ last_login_results.results }}"
+
+    - name: Build CSV File
+      ansible.builtin.template:
+        src: "userlist_template.j2"
+        dest: "output.csv"

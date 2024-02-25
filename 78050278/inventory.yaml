@@ -1,0 +1,14 @@
+---
+all:
+  vars:
+    ansible_python_interpreter: auto_silent
+    ansible_connection: local
+  children:
+    kube_gpu_node:
+      hosts:
+        test1:
+          number_of_mounts: 64
+        test2:
+          number_of_mounts: 0
+        test3:
+          number_of_mounts: 128

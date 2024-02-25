@@ -1,0 +1,67 @@
+---
+- name: "Play 1-Find the details here {{ source_host }} & {{ dest_host }}"
+  hosts: localhost
+  any_errors_fatal: True
+  serial: 1
+  vars:
+    source_host: "{{ hostvars[inventory_hostname]['serverlist_input'] }}"
+  gather_facts: no
+  tasks:
+    - add_host:
+        name: "{{ item | trim }}"
+        groups: source_node
+        printback_rec: "{{ hostvars[inventory_hostname]['printback_input'] }}"
+      with_items:
+        - "{{ source_host.split(',') }}"
+
+    - set_fact:
+        rec_group_names: 'source_node'
+
+- name: Check unreachable hosts
+  hosts: "{{ hostvars['localhost']['rec_group_names'] }}"
+  gather_facts: true
+  any_errors_fatal: false
+  tasks:
+    - name: Print group names
+      debug:
+        msg: "GROUP NAME TO BE TESTED: {{ group_names }}"
+
+    - name: Perform ping in Template
+      ping:
+
+    - block:
+        - debug:
+            var: ansible_play_hosts_all
+        - debug:
+            var: ansible_play_hosts
+        - set_fact:
+            down: "{{ ansible_play_hosts_all|difference(ansible_play_hosts) }}"
+        - debug:
+            var: down
+      run_once: true
+
+    - name: "Display unreachable hosts one at a time {{ startlogstring | default('start:') }}"
+      debug:
+        msg: "Unreachable Host: {{ item }}"
+      loop: "{{ ansible_play_hosts_all | difference(ansible_play_hosts) }}"
+      run_once: true
+
+    - fail:
+        msg: "Exiting play if target hosts are unreachable"
+      when: ansible_play_hosts_all != ansible_play_hosts
+      run_once: true
+
+- name: Play 2- Configure Source nodes
+  hosts: source_node
+  gather_facts: false
+  any_errors_fatal: false
+  debugger: never
+  ignore_unreachable: yes
+  vars:
+    ansible_ssh_common_args: '-o ConnectTimeout=2'
+  tasks:
+    # - name: Detect unreachable hosts
+    #   import_playbook: "{{ playbook_dir }}/generictask_templates/logunreachablehost.yml"
+
+    - name: Perform ping
+      ping:

@@ -1,0 +1,31 @@
+---
+argument_specs:
+  main:
+    short_description: "Some description"
+    options:
+      myApp:
+        type: dict
+        required: true
+        description: "Some description"
+        options:
+          version:
+            type: str
+            required: true
+            description: "the version"
+          database:
+            type: "dict"
+            required: true
+            description: database credentials
+            options:
+              url:
+                type: "str"
+                required: true
+                description: database URL
+              username:
+                type: "str"
+                required: true
+                description: Username to access database
+              password:
+                type: "str"
+                required: true
+                description: "DB user"

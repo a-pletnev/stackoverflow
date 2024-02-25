@@ -1,0 +1,34 @@
+---
+- hosts: localhost
+  tasks:
+    - name: Create VM container
+      community.docker.docker_container:
+        name: "my_alpine_cont"
+        image: library/alpine
+        tty: true
+
+- name: add to inventory
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: add to inventory
+      add_host:
+        name: my_alpine_cont
+        ansible_connection: docker
+        groups:
+          - my_grp
+
+- name: check container
+  hosts: my_grp
+  gather_facts: false
+  vars:
+    ansible_connection: docker
+  connection: docker
+  tasks:
+    - name: list root dir
+      command: ls -l /
+      register: result
+
+    - name: debug
+      debug:
+        var: result

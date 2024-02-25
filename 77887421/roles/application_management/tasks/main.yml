@@ -1,0 +1,9 @@
+---
+- name: Including named tasks
+  include_tasks:
+    file: "{{ item }}.yml"
+  register: included
+  loop: "{{ role_actions }}"
+
+- debug:
+    var: included

@@ -1,0 +1,7 @@
+---
+- name: List the unreachable hosts
+  hosts: "{{ test_hosts | default('all') }}"
+  gather_facts: "{{ gather_facts_on_test_hosts | default('false') }}"
+  tasks:
+    - debug:
+        var: ansible_play_hosts_all | difference(ansible_play_hosts)

@@ -1,0 +1,20 @@
+---
+- hosts: localhost
+  gather_facts: false
+  vars:
+    reg:
+      value:
+        - -Dtaxlink.log.location=C:\taxlink\logs
+        - -Dtaxlink.log.location=D:\taxlink\logs
+        - -Dtaxlink.log.location=E:\taxlink\logs
+        - -Dtaxlink.log.location=C:\\taxlink\\logs
+  tasks:
+    - name: check to see if reg values have already been added
+      set_fact:
+        regpres: true
+      loop: "{{ reg.value }}"
+      when: item is search('Dtaxlink')
+
+    - name: Output the registered variable
+      debug:
+        var: regpres

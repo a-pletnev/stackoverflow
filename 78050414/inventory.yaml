@@ -1,0 +1,15 @@
+---
+all:
+  vars:
+    ansible_python_interpreter: auto_silent
+    ansible_connection: local
+    printback_input: what is this?
+  hosts:
+    localhost:
+      rec_group_names: source_node
+source_node:
+  hosts:
+    remotehost1:
+      ansible_connection: ssh
+      ansible_host: example.com
+    remotehost[2:4]:

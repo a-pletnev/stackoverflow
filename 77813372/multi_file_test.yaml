@@ -1,0 +1,15 @@
+---
+- hosts: encrypted_hosts_test
+  tasks:
+#    - name: create multiple file tags
+#      ansible.builtin.lineinfile:
+#        path: "target_dir/{{ item.key }}"
+#        line: "{{ item.value.tag }}"
+#        create: yes
+#      loop: "{{ file_tags | dict2items }}"
+    - name: create multiple file secrets
+      ansible.builtin.lineinfile:
+        path: "target_dir/{{ item.key }}"
+        line: "{{ item.value.secret }}"
+        create: yes
+      loop: "{{ file_secrets | dict2items }}"

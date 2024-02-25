@@ -1,0 +1,14 @@
+---
+- name: Test with unreachable hosts 1
+  gather_facts: false # you can gather facts as well, but this is faster is you don't need them
+  hosts: source_node
+  tasks:
+    - name: Perform ping 1
+      ping:
+
+- name: Test with unreachable hosts 2
+  gather_facts: false # you can gather facts as well, but this is faster is you don't need them
+  hosts: source_node
+  tasks:
+    - name: Perform ping 2
+      ping:

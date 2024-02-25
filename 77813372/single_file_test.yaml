@@ -1,0 +1,8 @@
+---
+- hosts: encrypted_hosts_test
+  tasks:
+    - name: create file
+      ansible.builtin.lineinfile:
+        path: "target_dir/{{ file_name }}"
+        line: "{{ single_secret }}"
+        create: yes

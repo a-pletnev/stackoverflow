@@ -1,0 +1,18 @@
+all:
+  children:
+    encrypted_hosts_test:
+      hosts:
+        machine1:
+          single_secret: "123"
+          file_secrets:
+            fileA:
+              secret: "234"
+            fileB:
+              secret: "345"
+        machine2:
+          single_secret: "234"
+          file_secrets:
+            fileA:
+              secret: "567"
+            fileB:
+              secret: "789"

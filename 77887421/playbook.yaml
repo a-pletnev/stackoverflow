@@ -1,0 +1,17 @@
+---
+- hosts: localhost
+  gather_facts: false
+#  tasks:
+#    - name: Include tasks from the role
+#      include_role:
+#        name: application_management
+#        tasks_from: "{{ item }}"
+#      loop:
+#        - taskA
+#        - taskB
+  roles:
+    - role: application_management
+      vars:
+        role_actions:
+          - taskA
+          - taskB

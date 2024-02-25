@@ -1,0 +1,7 @@
+Hostname;Login;UID;GID;Comments;SUDO Enabled;Last_Login_Date
+localhost;_coreml;280;280;CoreML Services;NO;
+localhost;_sntpd;281;281;SNTP Server Daemon;NO;
+localhost;_trustd;282;282;trustd;NO;
+localhost;_darwindaemon;284;284;Darwin Daemon;NO;
+localhost;_notification_proxy;285;285;Notification Proxy;NO;
+localhost;_oahd;441;441;OAH Daemon;NO;

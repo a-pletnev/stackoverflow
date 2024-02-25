@@ -1,0 +1,53 @@
+---
+- hosts: localhost
+  vars:
+    argocd_admin_password: $2a$12$LI6UKgV.3BPIRt6XTZFdTO7yT86QodZRlBi37eKpydy9vPZ1DBtUq
+  tasks:
+    - name: Install the dependencies
+      package:
+        name:
+          - podman
+          - helm
+          - minikube
+
+    - name: Add a repository
+      kubernetes.core.helm_repository:
+        name: argo
+        repo_url: https://argoproj.github.io/argo-helm
+
+    - name: Deploy Argo CD chart
+      kubernetes.core.helm:
+        name: argo-cd
+        chart_ref: argo/argo-cd
+        release_namespace: argo-cd
+        create_namespace: true
+        update_repo_cache: true
+        chart_version: 5.52.1
+        release_values:
+          configs:
+            params:
+              server.insecure: "true"
+            secret:
+              argocdServerAdminPassword: '{{ argocd_admin_password }}'
+      register: result
+
+#    - name: Deploy Argo CD chart
+#      kubernetes.core.helm_template:
+#        name: argo-cd
+#        chart_ref: argo/argo-cd
+#        release_namespace: argo-cd
+##        create_namespace: true
+#        update_repo_cache: true
+#        chart_version: 5.52.1
+#        release_values:
+#          configs:
+#            params:
+#              server.insecure: "true"
+#            secret:
+#              argocdServerAdminPassword: "{{ argocd_admin_password }}"
+#      register: result
+#
+    - name: Dump the Helm execution result to a file
+      copy:
+        dest: target_dir/helm_result.yaml
+        content: "{{ result.stdout }}"

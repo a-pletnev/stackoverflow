@@ -1,0 +1,228 @@
+---
+#- name: Get mount details from the hosts
+#  hosts: localhost
+#  gather_facts: false
+#  tasks:
+#    - name: "Mount count on GPU Nodes"
+#      #      shell: "mount | grep -Ec '/dev/sd.*\\<csi' | awk '{ print $0,\"mounts found on $HOSTNAME\"($0>64? \" that are more than 64.\" : \".\") }'"
+#      shell: "mount | grep -Ec '/dev/d.*' | awk '{ print $0,\"mounts found on {{ inventory_hostname }}\"($0>6? \" that are more than 6.\" : \".\") }'"
+#      register: mounts_count
+#      changed_when: false
+#      #      failed_when:
+#      #      delegate_to: "{{ item }}"
+#      with_items: "{{ groups['all'] }}"
+#
+#    - name: Check if csi related mounts are present on gpu nodes (by the OP)
+#      assert:
+#        that:
+#          - item.stdout is not search('6')
+#        fail_msg: " mounts are present on this node"
+#        success_msg: "mounts are not present on this node"
+#      #        quiet: true      loop: "{{ mounts_count.results | ansible.utils.keep_keys(['item', 'stdout']) }}"
+#      loop_control:
+#        label: "{{ item.item }}"
+#      ignore_errors: yes
+
+- name: Get the mount details using Ansible facts
+  hosts: kube_gpu_node
+  gather_facts: true
+  tasks:
+#    - set_fact:
+#        number_of_mounts: "{{ [0, 64, 128] | random() }}"
+#      when: ansible_facts.distribution == 'MacOSX'
+
+#    - debug:
+#        var: number_of_mounts
+
+    - name: Set stats for mounts
+      set_stats:
+        data:
+          number_of_mounts: "{{ ansible_facts['ansible_mounts'] | length }}"
+#          number_of_mounts_text: "{{ ansible_facts['ansible_mounts'] | length }} mounts are present on this node"
+        per_host: true
+      when: ansible_facts.distribution != 'MacOSX'
+
+    - name: Set stats for mounts
+      set_stats:
+        data:
+          number_of_mounts: "{{ number_of_mounts }}"
+#          number_of_mounts_text: "{{ number_of_mounts }} mounts are present on this node"
+        per_host: true
+      when: ansible_facts.distribution == 'MacOSX'
+
+#    - set_fact:
+#        ansible_facts:
+#          ansible_mounts: [
+#            {
+#              "block_available": 7220998,
+#              "block_size": 4096,
+#              "block_total": 9817227,
+#              "block_used": 2596229,
+#              "device": "/dev/disk2s5s1",
+#              "fstype": "apfs",
+#              "inode_available": 10052341,
+#              "inode_total": 10419200,
+#              "inode_used": 366859,
+#              "mount": "/",
+#              "options": "rw,seclabel,relatime,data=ordered",
+#              "size_available": 29577207808,
+#              "size_total": 40211361792,
+#              "uuid": "cac81d61-d0f8-4b47-84aa-b48798239164"
+#            },
+#            {
+#              "block_available": 0,
+#              "block_size": 2048,
+#              "block_total": 252,
+#              "block_used": 252,
+#              "device": "/dev/disk2s4",
+#              "fstype": "apfs",
+#              "inode_available": 0,
+#              "inode_total": 0,
+#              "inode_used": 0,
+#              "mount": "/System/Volumes/VM",
+#              "options": "ro,relatime,mode=0700",
+#              "size_available": 0,
+#              "size_total": 516096,
+#              "uuid": "2018-10-25-12-05-57-00"
+#            },
+#            {
+#              "block_available": 0,
+#              "block_size": 2048,
+#              "block_total": 252,
+#              "block_used": 252,
+#              "device": "/dev/disk2s2",
+#              "fstype": "apfs",
+#              "inode_available": 0,
+#              "inode_total": 0,
+#              "inode_used": 0,
+#              "mount": "/System/Volumes/Preboot",
+#              "options": "ro,relatime,mode=0700",
+#              "size_available": 0,
+#              "size_total": 516096,
+#              "uuid": "2018-10-25-12-05-57-00"
+#            },
+#            {
+#              "block_available": 0,
+#              "block_size": 2048,
+#              "block_total": 252,
+#              "block_used": 252,
+#              "device": "/dev/disk2s6",
+#              "fstype": "apfs",
+#              "inode_available": 0,
+#              "inode_total": 0,
+#              "inode_used": 0,
+#              "mount": "/System/Volumes/Update",
+#              "options": "ro,relatime,mode=0700",
+#              "size_available": 0,
+#              "size_total": 516096,
+#              "uuid": "2018-10-25-12-05-57-00"
+#            },
+#            {
+#              "block_available": 0,
+#              "block_size": 2048,
+#              "block_total": 252,
+#              "block_used": 252,
+#              "device": "/dev/disk2s1",
+#              "fstype": "apfs",
+#              "inode_available": 0,
+#              "inode_total": 0,
+#              "inode_used": 0,
+#              "mount": "/System/Volumes/Data",
+#              "options": "ro,relatime,mode=0700",
+#              "size_available": 0,
+#              "size_total": 516096,
+#              "uuid": "2018-10-25-12-05-57-00"
+#            },
+#            {
+#              "block_available": 0,
+#              "block_size": 2048,
+#              "block_total": 252,
+#              "block_used": 252,
+#              "device": "/dev/disk3s1",
+#              "fstype": "apfs",
+#              "inode_available": 0,
+#              "inode_total": 0,
+#              "inode_used": 0,
+#              "mount": "/Volumes/Macintosh HD - Data",
+#              "options": "ro,relatime,mode=0700",
+#              "size_available": 0,
+#              "size_total": 516096,
+#              "uuid": "2018-10-25-12-05-57-00"
+#            },
+#            {
+#              "block_available": 0,
+#              "block_size": 2048,
+#              "block_total": 252,
+#              "block_used": 252,
+#              "device": "/dev/disk3s5",
+#              "fstype": "apfs",
+#              "inode_available": 0,
+#              "inode_total": 0,
+#              "inode_used": 0,
+#              "mount": "/Volumes/Macintosh HD",
+#              "options": "ro,relatime,mode=0700",
+#              "size_available": 0,
+#              "size_total": 516096,
+#              "uuid": "2018-10-25-12-05-57-00"
+#            }
+#          ]
+#
+#    - name: Check if csi related mounts are present on gpu nodes (using debug module)
+#      debug:
+#        msg: "{{ number_of_mounts | int }} mounts found on {{ inventory_hostname }}"
+#      failed_when: number_of_mounts | int != 64
+##      ignore_errors: true
+#      when: ansible_facts.distribution == 'MacOSX'
+#
+#    - name: Check if csi related mounts are present on gpu nodes (using debug module)
+#      debug:
+#        msg: "{{ ansible_facts['ansible_mounts'] | length }} mounts found on {{ inventory_hostname }}"
+#      failed_when: ansible_facts['ansible_mounts'] | length != 64
+#      ignore_errors: true
+#      when: ansible_facts.distribution != 'MacOSX'
+#
+#    - name: Check if csi related mounts are present on gpu nodes (using assert module, quiet = false)
+#      vars:
+#        message: "{{ number_of_mounts }} mounts are present on this node"
+#      assert:
+#        that:
+#          - number_of_mounts | int == 64
+#        fail_msg: "{{ message }}"
+#        success_msg: "{{ message }}"
+#      ignore_errors: true
+#      when: ansible_facts.distribution == 'MacOSX'
+
+    - name: Check if csi related mounts are present on gpu nodes (using assert module, quiet = true)
+      vars:
+        message: "{{ number_of_mounts }} mounts are present on this node"
+      assert:
+        that:
+          - number_of_mounts | int == 64
+        fail_msg: "{{ message }}"
+        success_msg: "{{ message }}"
+        quiet: true
+##      ignore_errors: true
+#      when: ansible_facts.distribution == 'MacOSX'
+#
+#    - name: Check if csi related mounts are present on gpu nodes (using assert module, quiet = false)
+#      vars:
+#        message: "{{ ansible_facts['ansible_mounts'] | length }} mounts are present on this node"
+#      assert:
+#        that:
+#          - ansible_facts['ansible_mounts'] | length == 64
+#        fail_msg: "{{ message }}"
+#        success_msg: "{{ message }}"
+#      ignore_errors: true
+#      when: ansible_facts.distribution != 'MacOSX'
+#
+#    - name: Check if csi related mounts are present on gpu nodes (using assert module, quiet = true)
+#      vars:
+#        message: "{{ ansible_facts['ansible_mounts'] | length }} mounts are present on this node"
+#      assert:
+#        that:
+#          - ansible_facts['ansible_mounts'] | length == 64
+#        fail_msg: "{{ message }}"
+#        success_msg: "{{ message }}"
+#        quiet: true
+#      ignore_errors: true
+#      when: ansible_facts.distribution != 'MacOSX'
