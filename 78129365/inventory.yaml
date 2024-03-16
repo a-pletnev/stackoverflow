@@ -1,0 +1,20 @@
+---
+all:
+  vars:
+    ansible_python_interpreter: auto_silent
+    ansible_connection: local
+  hosts:
+    localhost:
+gitlab_runners:
+  vars:
+    concurrent: 8
+    check_interval: 0
+    shutdown_timeout: 0
+    output_limit: 1000
+    url: https://servername-{{ inventory_hostname }} # just an example
+  hosts:
+    run-0[5:7]:
+      token: something
+    run-08:
+      output_limit: 10000
+      token: something

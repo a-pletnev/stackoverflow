@@ -1,0 +1,35 @@
+concurrent = 8
+check_interval = 0
+shutdown_timeout = 0
+
+[session_server]
+  session_timeout = 1800
+
+[[runners]]
+  name = "run-05"
+  url = "https://servername-run-05"
+  id = 349
+  token = "TOKEN349"
+  output_limit = 1000
+
+[[runners]]
+  name = "run-06"
+  url = "https://servername-run-06"
+  id = 350
+  token = "TOKEN350"
+  output_limit = 1000
+
+[[runners]]
+  name = "run-07"
+  url = "https://servername-run-07"
+  id = 351
+  token = "TOKEN351"
+  output_limit = 1000
+
+[[runners]]
+  name = "run-08"
+  url = "https://servername-run-08"
+  id = 352
+  token = "TOKEN352"
+  output_limit = 10000
+

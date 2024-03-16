@@ -1,0 +1,16 @@
+concurrent = {{ concurrent | default(8) }}
+check_interval = {{ check_interval | default(0) }}
+shutdown_timeout = {{ shutdown_timeout | default(0) }}
+
+[session_server]
+  session_timeout = {{ session_timeout | default(1800) }}
+
+{% for runner in groups['gitlab_runners'] %}
+[[runners]]
+  name = "{{ hostvars[runner].inventory_hostname }}"
+  url = "{{ hostvars[runner].url }}"
+  id = {{ hostvars[runner].id | default("should be generated automatically") }}
+  token = "{{ hostvars[runner].token }}"
+  output_limit = {{ hostvars[runner].output_limit }}
+
+{% endfor -%}

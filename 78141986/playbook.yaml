@@ -1,0 +1,50 @@
+---
+- name: Filter the assets based on the given list of extensions
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    sort_prompt: [ deb, appimage, '', tar.xz, tar.gz ]
+    asset_list:
+      - artifact_amd64.tar.gz
+      - artifact_amd64.tar.gz.sbom
+      - artifact_arm64.tar.gz
+      - artifact.deb
+      - artifact.appimage
+      - artifact_amd64
+      - artifact_amd64.sha256sum
+      - mise-v2024.3.1-linux-arm64
+      - mise-v2024.3.1-linux-arm64-musl
+      - mise-v2024.3.1-linux-arm64-musl.tar.gz
+      - mise-v2024.3.1-linux-arm64-musl.tar.xz
+      - mise-v2024.3.1-linux-arm64.tar.gz
+      - mise-v2024.3.1-linux-arm64.tar.xz
+      - mise-v2024.3.1-linux-armv6
+      - mise-v2024.3.1-linux-armv6-musl
+      - mise-v2024.3.1-linux-armv6-musl.tar.gz
+      - mise-v2024.3.1-linux-armv6-musl.tar.xz
+    asset_list_filtered: [ ]
+  tasks:
+    - name: Filter the assets
+      vars:
+        package: mise
+        regex_to_find_non_empty_extensions: '^{{ package }}.*({{ item }})$'
+        regex_to_find_empty_extensions: '^{{ package }}$'
+      set_fact:
+        asset_list_filtered: >
+          {{ 
+            asset_list_filtered +
+              asset_list 
+              | map('regex_search', regex_to_find_non_empty_extensions) 
+              | select            
+              if item != ''
+              else
+                asset_list 
+                | map('regex_search', regex_to_find_empty_extensions) 
+                | select
+          }}
+      loop: "{{ sort_prompt }}"
+
+    - name: List the results
+      debug:
+        var: asset_list_filtered

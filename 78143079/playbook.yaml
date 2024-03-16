@@ -1,0 +1,9 @@
+---
+- name: Filter the assets based on the given list of extensions
+  hosts: localhost
+  connection: local
+  gather_facts: true
+  tasks:
+    - name: List the results
+      debug:
+        var: ansible_facts

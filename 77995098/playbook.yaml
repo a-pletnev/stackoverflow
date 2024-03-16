@@ -1,0 +1,20 @@
+---
+- name: Filter the assets based on the given list of extensions
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    region:
+    image_id: ami-03484a09b43a06725
+  tasks:
+    - amazon.aws.ec2_instance:
+        region: "{{ region }}"
+        state: running
+        wait: true
+        count: 1
+        image_id: "{{ image_id }}"
+        instance_type: t2.micro
+        name: new-ec2-instance
+        profile:
+      register: ec2
+

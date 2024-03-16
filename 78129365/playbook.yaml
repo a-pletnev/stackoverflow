@@ -1,0 +1,24 @@
+---
+- name: Add a line into a file at multiple spots
+  hosts: gitlab_runners
+  gather_facts: false
+  tasks:
+#    - name: Add output_limit for each runner
+#      ansible.builtin.replace:
+#        path: opt/gitlab_config.toml
+#        regexp: 'id(.*)\n(?!token)(.*)'
+#        replace: id\1\n  output_limit = 1000\n\2
+
+#    - name: Add output_limit for each runner
+#      ansible.builtin.replace:
+#        path: opt/gitlab_config.toml
+#        regexp: "(^.*id.*\n)(?!output_limit.*)(^.*token.*)"
+#        replace: \1  output_limit = 1000\n\2
+
+    - name: Generate the config file
+      template:
+        src: templates/gitlab_config.toml.j2
+        dest: opt/gitlab_config.toml
+#        validate: "you-can-also-run-a-validation-command-and-pass-the-path-to-the-config-file %s"
+      delegate_to: localhost
+      run_once: true
